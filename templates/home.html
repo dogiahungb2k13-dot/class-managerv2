@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+{% block page_title %}Trang chủ{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-left">
+        <span class="pill">Class Manager</span>
+        <h2>Quản lý lớp học đẹp hơn, nhanh hơn và thông minh hơn</h2>
+        <p>
+            Tạo lớp, thêm học sinh từ Excel, xuất danh sách học sinh, đăng thông báo
+            và quản lý lớp học trên một giao diện chuyên nghiệp.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="{{ url_for('register') }}">Bắt đầu ngay</a>
+            <a class="btn btn-secondary" href="{{ url_for('login') }}">Đăng nhập</a>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <div class="metric-card">
+            <span>Lớp học</span>
+            <strong>Tạo nhanh</strong>
+        </div>
+        <div class="metric-card">
+            <span>Excel</span>
+            <strong>Nhập / Xuất</strong>
+        </div>
+        <div class="metric-card">
+            <span>Thông báo</span>
+            <strong>Rõ ràng</strong>
+        </div>
+        <div class="metric-card">
+            <span>Mã lớp</span>
+            <strong>Tham gia dễ</strong>
+        </div>
+    </div>
+</section>
+
+<section class="feature-grid">
+    <div class="feature-card">
+        <h3>Tạo lớp dễ dàng</h3>
+        <p>Thiết lập lớp học chỉ với vài thao tác, giao diện rõ ràng và hiện đại.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Nhập học sinh từ Excel</h3>
+        <p>Phù hợp với giáo viên cần thêm danh sách học sinh số lượng lớn.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Xuất dữ liệu nhanh</h3>
+        <p>Dễ dàng tải về danh sách học sinh để lưu trữ hoặc in ấn.</p>
+    </div>
+</section>
+{% endblock %}

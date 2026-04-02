@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Đăng ký{% endblock %}
+{% block page_title %}Đăng ký{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h2>Tạo tài khoản mới</h2>
+        <p>Đăng ký để bắt đầu sử dụng Class Manager.</p>
+
+        <form method="post">
+            <label>Họ và tên</label>
+            <input name="full_name" placeholder="Nguyễn Văn A" required>
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="email@example.com" required>
+
+            <label>Mật khẩu</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <label>Vai trò</label>
+            <select name="role" required>
+                <option value="student">Học sinh</option>
+                <option value="teacher">Giáo viên</option>
+            </select>
+
+            <button class="btn btn-primary full-width" type="submit">Tạo tài khoản</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

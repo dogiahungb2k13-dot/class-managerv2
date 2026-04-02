@@ -1,0 +1,1249 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết lớp{% endblock %}
+{% block page_title %}Chi tiết lớp{% endblock %}
+
+{% block content %}
+<style>
+    .class-page {
+        display: grid;
+        gap: 20px;
+        padding-bottom: 96px;
+    }
+
+    .hero-class-card,
+    .section-card,
+    .priority-panel,
+    .rank-card,
+    .question-card {
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.84), rgba(30, 41, 59, 0.60));
+        box-shadow: 0 16px 40px rgba(8, 15, 35, 0.22);
+    }
+
+    .hero-class-card {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 18px;
+        padding: 22px;
+    }
+
+    .hero-main h2 {
+        margin: 14px 0 10px;
+        font-size: 2.1rem;
+        line-height: 1.05;
+    }
+
+    .hero-main p {
+        margin: 7px 0;
+        color: rgba(255,255,255,0.76);
+    }
+
+    .hero-stats {
+        display: grid;
+        gap: 12px;
+    }
+
+    .mini-stat {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.07);
+    }
+
+    .mini-stat span {
+        display: block;
+        color: rgba(255,255,255,0.70);
+        font-size: 0.92rem;
+    }
+
+    .mini-stat strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 1.65rem;
+        color: #fff;
+    }
+
+    .section-card {
+        padding: 20px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .section-header h2,
+    .section-header h3 {
+        margin: 0 0 6px;
+    }
+
+    .section-header p {
+        margin: 0;
+        color: rgba(255,255,255,0.72);
+    }
+
+    .section-tag {
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(59,130,246,0.18);
+        color: #bfdbfe;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .priority-panel {
+        padding: 20px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(234, 179, 8, 0.16), rgba(15, 23, 42, 0.82));
+    }
+
+    .priority-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .priority-item {
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
+        display: grid;
+        gap: 10px;
+        min-height: 120px;
+    }
+
+    .priority-item h4 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .priority-item p {
+        margin: 0;
+        color: rgba(255,255,255,0.70);
+        font-size: 0.92rem;
+    }
+
+    .priority-item .btn,
+    .priority-item form {
+        margin-top: auto;
+    }
+
+    .main-aside {
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .toolbar-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 920px;
+    }
+
+    th, td {
+        padding: 14px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    th:first-child, td:first-child,
+    th:nth-child(2), td:nth-child(2) {
+        text-align: left;
+    }
+
+    .score-table input,
+    .attendance-table select,
+    .announce-form input,
+    .ask-form input,
+    .announce-form textarea,
+    .ask-form textarea,
+    .wheel-area textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        outline: none;
+    }
+
+    .score-table input {
+        min-width: 74px;
+        text-align: center;
+    }
+
+    .announce-form textarea,
+    .ask-form textarea,
+    .wheel-area textarea {
+        resize: vertical;
+    }
+
+    .pill-rank,
+    .pill-attendance {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 88px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .good { background: rgba(34,197,94,0.18); color: #bbf7d0; }
+    .pretty { background: rgba(59,130,246,0.18); color: #bfdbfe; }
+    .mid { background: rgba(245,158,11,0.18); color: #fde68a; }
+    .low { background: rgba(239,68,68,0.18); color: #fecaca; }
+
+    .present { background: rgba(34,197,94,0.18); color: #bbf7d0; }
+    .late { background: rgba(245,158,11,0.18); color: #fde68a; }
+    .absent { background: rgba(239,68,68,0.18); color: #fecaca; }
+
+    .rank-card,
+    .question-card {
+        padding: 18px;
+    }
+
+    .rank-list,
+    .question-list,
+    .support-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .rank-item,
+    .question-item,
+    .support-item {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.07);
+    }
+
+    .rank-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .rank-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .rank-badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        background: linear-gradient(135deg, #60a5fa, #4f46e5);
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .muted {
+        color: rgba(255,255,255,0.70);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    .wheel-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .wheel-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .wheel-result {
+        margin-top: 12px;
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.07);
+    }
+
+    .wheel-result small {
+        display: block;
+        color: rgba(255,255,255,0.68);
+        margin-bottom: 6px;
+    }
+
+    .wheel-result strong {
+        font-size: 1.15rem;
+    }
+
+    .wheel-box {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 520px;
+    }
+
+    .wheel-pointer {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 18px solid transparent;
+        border-right: 18px solid transparent;
+        border-top: 30px solid #f8fafc;
+        z-index: 2;
+    }
+
+    .support-fab {
+        position: fixed;
+        right: 16px;
+        bottom: 18px;
+        z-index: 100;
+        width: 230px;
+        border-radius: 20px;
+        border: 1px solid rgba(59,130,246,0.24);
+        background: linear-gradient(135deg, rgba(14,165,233,0.28), rgba(37,99,235,0.62));
+        box-shadow: 0 18px 40px rgba(14,165,233,0.22);
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    .support-fab button {
+        width: 100%;
+        border: none;
+        background: transparent;
+        color: #fff;
+        padding: 14px 16px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+
+    .support-fab-body {
+        display: none;
+        padding: 0 14px 14px;
+    }
+
+    .support-fab.open .support-fab-body {
+        display: grid;
+        gap: 10px;
+    }
+
+    .support-fab-line {
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.12);
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: #fff;
+    }
+
+    .mobile-student-cards,
+    .mobile-score-cards,
+    .mobile-attendance-cards {
+        display: none;
+    }
+
+    .mobile-card-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .mobile-item-card {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        display: grid;
+        gap: 10px;
+    }
+
+    .mobile-item-card h4 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .mobile-meta {
+        color: rgba(255,255,255,0.72);
+        font-size: 0.92rem;
+        word-break: break-word;
+    }
+
+    .mobile-fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .mobile-fields label {
+        font-size: 0.86rem;
+        color: rgba(255,255,255,0.7);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .mobile-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .announcement-item {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        margin-top: 12px;
+    }
+
+    @media (max-width: 1200px) {
+        .hero-class-card,
+        .main-aside {
+            grid-template-columns: 1fr;
+        }
+
+        .priority-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 900px) {
+        .class-page {
+            gap: 16px;
+            padding-bottom: 110px;
+        }
+
+        .hero-class-card,
+        .section-card,
+        .priority-panel,
+        .rank-card,
+        .question-card {
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .hero-main h2 {
+            font-size: 1.7rem;
+        }
+
+        .priority-grid,
+        .stats-grid,
+        .wheel-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .section-tag {
+            white-space: normal;
+        }
+
+        .table-wrap {
+            display: none;
+        }
+
+        .mobile-student-cards,
+        .mobile-score-cards,
+        .mobile-attendance-cards {
+            display: block;
+        }
+
+        .wheel-box {
+            min-height: auto;
+        }
+
+        #wheelCanvas {
+            width: 100%;
+            height: auto;
+            max-width: 360px;
+        }
+
+        .support-fab {
+            left: 12px;
+            right: 12px;
+            width: auto;
+            bottom: 12px;
+        }
+
+        .mobile-fields {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="class-page">
+    <section class="hero-class-card">
+        <div class="hero-main">
+            <div class="class-card-top">
+                <span class="subject-chip">{{ class_info.subject }}</span>
+                <span class="code-chip">Mã lớp: {{ class_info.class_code }}</span>
+            </div>
+            <h2>{{ class_info.name }}</h2>
+            <p><strong>Giáo viên:</strong> {{ class_info.teacher_name }}</p>
+            <p>{{ class_info.description if class_info.description else 'Không có mô tả.' }}</p>
+        </div>
+
+        <div class="hero-stats">
+            <div class="mini-stat">
+                <span>Tổng học sinh</span>
+                <strong>{{ stats.total_students if stats and stats.total_students is not none else 0 }}</strong>
+            </div>
+            <div class="mini-stat">
+                <span>Đã có điểm</span>
+                <strong>{{ stats.scored_students if stats and stats.scored_students is not none else 0 }}</strong>
+            </div>
+            <div class="mini-stat">
+                <span>Điểm TB lớp</span>
+                <strong>{% if stats and stats.class_average is not none %}{{ stats.class_average }}{% else %}--{% endif %}</strong>
+            </div>
+        </div>
+    </section>
+
+    {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+    <section class="priority-panel">
+        <div class="section-header">
+            <div>
+                <h2>Tác vụ quan trọng</h2>
+                <p>Chỉ giữ các tác vụ thật sự cần: danh sách học sinh, nhập điểm, điểm danh, vòng quay, thông báo, Excel.</p>
+            </div>
+            <span class="section-tag">Quan trọng</span>
+        </div>
+
+        <div class="priority-grid">
+            <div class="priority-item">
+                <h4>Điểm danh</h4>
+                <p>Đi thẳng tới khu điểm danh của lớp.</p>
+                <a href="#attendance-section" class="btn btn-primary">Mở điểm danh</a>
+            </div>
+            <div class="priority-item">
+                <h4>Nhập điểm</h4>
+                <p>Đi thẳng tới khu nhập điểm học sinh.</p>
+                <a href="#scores-section" class="btn btn-primary">Mở bảng điểm</a>
+            </div>
+            <div class="priority-item">
+                <h4>Vòng quay</h4>
+                <p>Mở phần chọn ngẫu nhiên nhanh.</p>
+                <a href="#wheel-section" class="btn btn-secondary">Mở vòng quay</a>
+            </div>
+            <div class="priority-item">
+                <h4>Excel và thông báo</h4>
+                <p>Nhập Excel hoặc đăng thông báo mới.</p>
+                <a href="#announce-tools" class="btn btn-secondary">Đi tới công cụ</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section id="students-section" class="section-card">
+        <div class="section-header">
+            <div>
+                <h2>1. Danh sách học sinh</h2>
+                <p>Đây là phần quan trọng nhất của lớp nên được đặt riêng và dễ nhìn.</p>
+            </div>
+            <span class="section-tag">Học sinh</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>STT</th>
+                    <th>Họ tên</th>
+                    <th>Email đăng nhập</th>
+                    <th>Email liên hệ</th>
+                    {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                    <th>Thao tác</th>
+                    {% endif %}
+                </tr>
+                {% for s in students %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ s.full_name }}</td>
+                    <td>{{ s.email }}</td>
+                    <td>{{ s.email }}</td>
+                    {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                    <td>
+                        <form method="post" action="{{ url_for('remove_student_from_class', class_id=class_info.id, student_id=s.id) }}" onsubmit="return confirm('Xóa học sinh này khỏi lớp?');">
+                            <button class="btn btn-danger" type="submit">Xóa</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="mobile-student-cards">
+            <div class="mobile-card-list">
+                {% for s in students %}
+                <div class="mobile-item-card">
+                    <h4>{{ loop.index }}. {{ s.full_name }}</h4>
+                    <div class="mobile-meta">Email đăng nhập: {{ s.email }}</div>
+                    <div class="mobile-meta">Email liên hệ: {{ s.email }}</div>
+                    {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                    <div class="mobile-actions">
+                        <form method="post" action="{{ url_for('remove_student_from_class', class_id=class_info.id, student_id=s.id) }}" onsubmit="return confirm('Xóa học sinh này khỏi lớp?');">
+                            <button class="btn btn-danger" type="submit">Xóa học sinh</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="scores-section" class="main-aside">
+        <div class="section-card">
+            <div class="section-header">
+                <div>
+                    <h2>2. Nhập điểm học sinh</h2>
+                    <p>Giữ tập trung vào nhập điểm và xem điểm trung bình.</p>
+                </div>
+                <span class="section-tag">Điểm số</span>
+            </div>
+
+            <div class="table-wrap">
+                <table class="score-table">
+                    <thead>
+                        <tr>
+                            <th>Học sinh</th>
+                            <th>Email</th>
+                            <th>Miệng</th>
+                            <th>15p</th>
+                            <th>1 tiết</th>
+                            <th>Giữa kỳ</th>
+                            <th>Cuối kỳ</th>
+                            <th>TB</th>
+                            <th>Xếp loại</th>
+                            {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                            <th>Lưu</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in students %}
+                        <tr>
+                            <td>{{ s.full_name }}</td>
+                            <td>{{ s.email }}</td>
+                            {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                            <form method="post" action="{{ url_for('save_student_score', class_id=class_info.id) }}">
+                                <input type="hidden" name="student_id" value="{{ s.id }}">
+                                <td><input type="number" min="0" max="10" step="0.1" name="oral_score" value="{{ '' if s.oral_score is none else s.oral_score }}"></td>
+                                <td><input type="number" min="0" max="10" step="0.1" name="score_15m" value="{{ '' if s.score_15m is none else s.score_15m }}"></td>
+                                <td><input type="number" min="0" max="10" step="0.1" name="score_1period" value="{{ '' if s.score_1period is none else s.score_1period }}"></td>
+                                <td><input type="number" min="0" max="10" step="0.1" name="midterm_score" value="{{ '' if s.midterm_score is none else s.midterm_score }}"></td>
+                                <td><input type="number" min="0" max="10" step="0.1" name="final_score" value="{{ '' if s.final_score is none else s.final_score }}"></td>
+                                <td>{{ '--' if s.average_score is none else s.average_score }}</td>
+                                <td>
+                                    {% set rank = s.rank_label or 'Chưa có' %}
+                                    <span class="pill-rank {% if rank == 'Giỏi' %}good{% elif rank == 'Khá' %}pretty{% elif rank == 'Trung bình' %}mid{% elif rank == 'Yếu' %}low{% endif %}">{{ rank }}</span>
+                                </td>
+                                <td><button class="btn btn-primary" type="submit">Lưu</button></td>
+                            </form>
+                            {% else %}
+                                <td>{{ '--' if s.oral_score is none else s.oral_score }}</td>
+                                <td>{{ '--' if s.score_15m is none else s.score_15m }}</td>
+                                <td>{{ '--' if s.score_1period is none else s.score_1period }}</td>
+                                <td>{{ '--' if s.midterm_score is none else s.midterm_score }}</td>
+                                <td>{{ '--' if s.final_score is none else s.final_score }}</td>
+                                <td>{{ '--' if s.average_score is none else s.average_score }}</td>
+                                <td>
+                                    {% set rank = s.rank_label or 'Chưa có' %}
+                                    <span class="pill-rank {% if rank == 'Giỏi' %}good{% elif rank == 'Khá' %}pretty{% elif rank == 'Trung bình' %}mid{% elif rank == 'Yếu' %}low{% endif %}">{{ rank }}</span>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-score-cards">
+                <div class="mobile-card-list">
+                    {% for s in students %}
+                    <div class="mobile-item-card">
+                        <h4>{{ s.full_name }}</h4>
+                        <div class="mobile-meta">{{ s.email }}</div>
+
+                        {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+                        <form method="post" action="{{ url_for('save_student_score', class_id=class_info.id) }}">
+                            <input type="hidden" name="student_id" value="{{ s.id }}">
+                            <div class="mobile-fields">
+                                <div>
+                                    <label>Miệng</label>
+                                    <input type="number" min="0" max="10" step="0.1" name="oral_score" value="{{ '' if s.oral_score is none else s.oral_score }}">
+                                </div>
+                                <div>
+                                    <label>15p</label>
+                                    <input type="number" min="0" max="10" step="0.1" name="score_15m" value="{{ '' if s.score_15m is none else s.score_15m }}">
+                                </div>
+                                <div>
+                                    <label>1 tiết</label>
+                                    <input type="number" min="0" max="10" step="0.1" name="score_1period" value="{{ '' if s.score_1period is none else s.score_1period }}">
+                                </div>
+                                <div>
+                                    <label>Giữa kỳ</label>
+                                    <input type="number" min="0" max="10" step="0.1" name="midterm_score" value="{{ '' if s.midterm_score is none else s.midterm_score }}">
+                                </div>
+                                <div>
+                                    <label>Cuối kỳ</label>
+                                    <input type="number" min="0" max="10" step="0.1" name="final_score" value="{{ '' if s.final_score is none else s.final_score }}">
+                                </div>
+                            </div>
+                            <div class="mobile-meta">TB: {{ '--' if s.average_score is none else s.average_score }}</div>
+                            <div><span class="pill-rank {% if s.rank_label == 'Giỏi' %}good{% elif s.rank_label == 'Khá' %}pretty{% elif s.rank_label == 'Trung bình' %}mid{% elif s.rank_label == 'Yếu' %}low{% endif %}">{{ s.rank_label or 'Chưa có' }}</span></div>
+                            <div class="mobile-actions">
+                                <button class="btn btn-primary" type="submit">Lưu điểm</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="mobile-meta">Miệng: {{ '--' if s.oral_score is none else s.oral_score }}</div>
+                        <div class="mobile-meta">15p: {{ '--' if s.score_15m is none else s.score_15m }}</div>
+                        <div class="mobile-meta">1 tiết: {{ '--' if s.score_1period is none else s.score_1period }}</div>
+                        <div class="mobile-meta">Giữa kỳ: {{ '--' if s.midterm_score is none else s.midterm_score }}</div>
+                        <div class="mobile-meta">Cuối kỳ: {{ '--' if s.final_score is none else s.final_score }}</div>
+                        <div class="mobile-meta">TB: {{ '--' if s.average_score is none else s.average_score }}</div>
+                        <div><span class="pill-rank {% if s.rank_label == 'Giỏi' %}good{% elif s.rank_label == 'Khá' %}pretty{% elif s.rank_label == 'Trung bình' %}mid{% elif s.rank_label == 'Yếu' %}low{% endif %}">{{ s.rank_label or 'Chưa có' }}</span></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <aside class="rank-card">
+            <div class="section-header">
+                <div>
+                    <h3>Top điểm cao</h3>
+                    <p>Nhóm học sinh nổi bật của lớp.</p>
+                </div>
+                <span class="section-tag">Top</span>
+            </div>
+
+            <div class="rank-list">
+                {% if top_students %}
+                    {% for s in top_students %}
+                    <div class="rank-item">
+                        <div class="rank-left">
+                            <span class="rank-badge">{{ loop.index }}</span>
+                            <div>
+                                <strong>{{ s.full_name }}</strong>
+                                <div class="muted">{{ s.rank_label }}</div>
+                            </div>
+                        </div>
+                        <strong>{{ s.average_score }}</strong>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="question-item">
+                        <strong>Chưa có dữ liệu điểm</strong>
+                        <div class="muted">Hãy nhập điểm để phần này hiển thị.</div>
+                    </div>
+                {% endif %}
+            </div>
+        </aside>
+    </section>
+
+    <section id="attendance-section" class="section-card">
+        <div class="section-header">
+            <div>
+                <h2>3. Điểm danh học sinh</h2>
+                <p>Điểm danh rõ ràng, ưu tiên sau danh sách học sinh và bảng điểm.</p>
+            </div>
+            <span class="section-tag">Điểm danh</span>
+        </div>
+
+        <form method="get" class="toolbar-row">
+            <label for="attendance_date">Ngày điểm danh</label>
+            <input id="attendance_date" type="date" name="attendance_date" value="{{ attendance_date }}">
+            <button class="btn btn-secondary" type="submit">Xem ngày này</button>
+        </form>
+
+        <div class="stats-grid">
+            <div class="mini-stat"><span>Có mặt</span><strong>{{ attendance_summary.present_count if attendance_summary else 0 }}</strong></div>
+            <div class="mini-stat"><span>Đi muộn</span><strong>{{ attendance_summary.late_count if attendance_summary else 0 }}</strong></div>
+            <div class="mini-stat"><span>Vắng</span><strong>{{ attendance_summary.absent_count if attendance_summary else 0 }}</strong></div>
+        </div>
+
+        {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+        <form method="post" action="{{ url_for('save_attendance', class_id=class_info.id) }}">
+            <input type="hidden" name="attendance_date" value="{{ attendance_date }}">
+
+            <div class="table-wrap">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Học sinh</th>
+                            <th>Email</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in students %}
+                        <tr>
+                            <td>{{ s.full_name }}</td>
+                            <td>{{ s.email }}</td>
+                            <td>
+                                <input type="hidden" name="student_id" value="{{ s.id }}">
+                                <select name="attendance_status">
+                                    <option value="present" {% if s.attendance_status == 'present' %}selected{% endif %}>Có mặt</option>
+                                    <option value="late" {% if s.attendance_status == 'late' %}selected{% endif %}>Đi muộn</option>
+                                    <option value="absent" {% if s.attendance_status == 'absent' %}selected{% endif %}>Vắng</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-attendance-cards">
+                <div class="mobile-card-list">
+                    {% for s in students %}
+                    <div class="mobile-item-card">
+                        <h4>{{ s.full_name }}</h4>
+                        <div class="mobile-meta">{{ s.email }}</div>
+                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                        <div>
+                            <label>Trạng thái</label>
+                            <select name="attendance_status">
+                                <option value="present" {% if s.attendance_status == 'present' %}selected{% endif %}>Có mặt</option>
+                                <option value="late" {% if s.attendance_status == 'late' %}selected{% endif %}>Đi muộn</option>
+                                <option value="absent" {% if s.attendance_status == 'absent' %}selected{% endif %}>Vắng</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="margin-top:16px;">
+                <button class="btn btn-primary" type="submit">Lưu điểm danh</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="mobile-card-list">
+            {% for s in students %}
+            <div class="mobile-item-card">
+                <h4>{{ s.full_name }}</h4>
+                <div class="mobile-meta">{{ s.email }}</div>
+                <div>
+                    {% if s.attendance_status == 'present' %}
+                        <span class="pill-attendance present">Có mặt</span>
+                    {% elif s.attendance_status == 'late' %}
+                        <span class="pill-attendance late">Đi muộn</span>
+                    {% elif s.attendance_status == 'absent' %}
+                        <span class="pill-attendance absent">Vắng</span>
+                    {% else %}
+                        <span class="pill-attendance">Chưa có</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+
+    <section id="wheel-section" class="section-card">
+        <div class="section-header">
+            <div>
+                <h2>4. Vòng quay chọn</h2>
+                <p>Một khu riêng chỉ cho chọn ngẫu nhiên để không chen với phần khác.</p>
+            </div>
+            <span class="section-tag">Vòng quay</span>
+        </div>
+
+        <div class="wheel-layout">
+            <div class="wheel-area">
+                <div class="wheel-actions">
+                    <button type="button" class="btn btn-primary" id="loadStudentNamesBtn">Dùng danh sách học sinh</button>
+                    <button type="button" class="btn btn-secondary" id="clearWheelInputBtn">Xóa ô nhập</button>
+                    <button type="button" class="btn btn-warning" id="renderWheelBtn">Tạo vòng quay</button>
+                    <button type="button" class="btn btn-success" id="spinWheelBtn">Quay ngay</button>
+                </div>
+
+                <label for="wheelItemsInput">Danh sách vòng quay</label>
+                <textarea id="wheelItemsInput" rows="12" placeholder="Ví dụ:
+Nguyễn Văn A
+Trần Thị B
+Tổ 1
+Tổ 2
+Câu hỏi số 1"></textarea>
+
+                <div class="wheel-result">
+                    <small>Kết quả</small>
+                    <strong id="wheelResult">Chưa quay</strong>
+                </div>
+            </div>
+
+            <div class="wheel-box">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheelCanvas" width="520" height="520"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="questions-section" class="main-aside">
+        <div class="section-card">
+            {% if session.get('role') == 'student' %}
+            <div class="section-header">
+                <div>
+                    <h2>5. Hỏi giáo viên</h2>
+                    <p>Học sinh gửi câu hỏi trực tiếp bằng email giáo viên của lớp.</p>
+                </div>
+                <span class="section-tag">Câu hỏi</span>
+            </div>
+
+            <div class="question-item">
+                <strong>Email giáo viên lớp</strong>
+                <div class="muted">{{ class_info.teacher_email }}</div>
+            </div>
+
+            <form method="post" action="{{ url_for('ask_teacher_question', class_id=class_info.id) }}" class="ask-form" style="display:grid;gap:12px;margin-top:14px;">
+                <label>Email giáo viên</label>
+                <input type="email" name="teacher_email" placeholder="Nhập đúng email giáo viên" required>
+                <label>Tiêu đề</label>
+                <input type="text" name="title" placeholder="Ví dụ: Em chưa hiểu bài" required>
+                <label>Nội dung</label>
+                <textarea name="content" rows="6" placeholder="Nhập câu hỏi..." required></textarea>
+                <button class="btn btn-primary" type="submit">Gửi câu hỏi</button>
+            </form>
+            {% else %}
+            <div class="section-header">
+                <div>
+                    <h2>5. Câu hỏi học sinh gửi</h2>
+                    <p>Xem tập trung các câu hỏi ngay tại đây.</p>
+                </div>
+                <span class="section-tag">Inbox</span>
+            </div>
+
+            <div class="question-list">
+                {% if questions %}
+                    {% for q in questions %}
+                    <div class="question-item">
+                        <strong>{{ q.title }}</strong>
+                        <div class="muted">{{ q.student_name }} - {{ q.student_email }} - {{ q.created_at|datetime_format }}</div>
+                        <div style="margin-top:8px;">{{ q.content }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="question-item">
+                        <strong>Chưa có câu hỏi nào</strong>
+                        <div class="muted">Khi học sinh gửi câu hỏi, chúng sẽ hiện ở đây.</div>
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+        <aside class="question-card" id="announce-tools">
+            <div class="section-header">
+                <div>
+                    <h3>Công cụ phụ</h3>
+                    <p>Thêm học sinh thủ công hoặc dùng Excel.</p>
+                </div>
+                <span class="section-tag">Công cụ</span>
+            </div>
+
+            <div class="support-list">
+                <div class="question-item">
+                    <strong>Thêm học sinh thủ công</strong>
+                    <form method="post" action="{{ url_for('add_student_manual', class_id=class_info.id) }}" style="display:grid;gap:10px;margin-top:10px;">
+                        <input name="full_name" placeholder="Họ và tên học sinh" required>
+                        <input type="email" name="email" placeholder="Email học sinh" required>
+                        <input name="phone_number" placeholder="SĐT (dùng làm mật khẩu mặc định)">
+                        <button class="btn btn-primary" type="submit">Thêm học sinh</button>
+                    </form>
+                </div>
+
+                <a class="btn btn-secondary" href="{{ url_for('download_student_template') }}">Tải file mẫu</a>
+
+                <form method="post" action="{{ url_for('import_students_excel', class_id=class_info.id) }}" enctype="multipart/form-data" style="display:grid;gap:10px;">
+                    <input type="file" name="excel_file" accept=".xlsx,.xls" required>
+                    <button class="btn btn-primary" type="submit">Nhập từ Excel</button>
+                </form>
+
+                <a class="btn btn-success" href="{{ url_for('export_students_excel', class_id=class_info.id) }}">Xuất Excel</a>
+            </div>
+        </aside>
+        {% endif %}
+    </section>
+
+    <section id="announce-section" class="main-aside">
+        <div class="section-card">
+            <div class="section-header">
+                <div>
+                    <h2>6. Thông báo lớp</h2>
+                    <p>Danh sách thông báo riêng để dễ đọc.</p>
+                </div>
+                <span class="section-tag">Thông báo</span>
+            </div>
+
+            {% if announcements %}
+                {% for a in announcements %}
+                <div class="announcement-item">
+                    <h3>{{ a.title }}</h3>
+                    <p class="muted">Đăng lúc: {{ a.created_at|datetime_format }}</p>
+                    <p>{{ a.content }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="question-item">
+                    <strong>Chưa có thông báo</strong>
+                    <div class="muted">Thông báo mới sẽ hiển thị tại đây.</div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if session.get('role') == 'teacher' and class_info.teacher_id == session.get('user_id') %}
+        <aside class="section-card">
+            <div class="section-header">
+                <div>
+                    <h3>Tạo thông báo mới</h3>
+                    <p>Đăng nhanh nội dung mới cho lớp.</p>
+                </div>
+                <span class="section-tag">Tạo mới</span>
+            </div>
+
+            <form method="post" action="{{ url_for('create_announcement', class_id=class_info.id) }}" class="announce-form" style="display:grid;gap:12px;">
+                <label>Tiêu đề</label>
+                <input name="title" placeholder="Ví dụ: Bài tập tuần này" required>
+                <label>Nội dung</label>
+                <textarea name="content" rows="6" placeholder="Nhập nội dung thông báo" required></textarea>
+                <button class="btn btn-primary" type="submit">Đăng thông báo</button>
+            </form>
+        </aside>
+        {% endif %}
+    </section>
+</div>
+
+<div class="support-fab" id="supportFab">
+    <button type="button" id="supportFabToggle">
+        <span>Support • Admin Viet Phuong</span>
+        <span id="supportFabIcon">＋</span>
+    </button>
+    <div class="support-fab-body">
+        <div class="support-fab-line"><span>Zalo</span><strong>0823.833.088</strong></div>
+        <div class="support-fab-line"><span>Hotline</span><strong>09.2222.8720</strong></div>
+        <div class="support-fab-line"><span>Admin</span><strong>Viet Phuong</strong></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const studentNames = {{ students | map(attribute='full_name') | list | tojson }};
+
+    const textarea = document.getElementById("wheelItemsInput");
+    const loadStudentNamesBtn = document.getElementById("loadStudentNamesBtn");
+    const clearWheelInputBtn = document.getElementById("clearWheelInputBtn");
+    const renderWheelBtn = document.getElementById("renderWheelBtn");
+    const spinWheelBtn = document.getElementById("spinWheelBtn");
+    const resultBox = document.getElementById("wheelResult");
+    const canvas = document.getElementById("wheelCanvas");
+    const supportFab = document.getElementById("supportFab");
+    const supportFabToggle = document.getElementById("supportFabToggle");
+    const supportFabIcon = document.getElementById("supportFabIcon");
+
+    if (supportFab && supportFabToggle && supportFabIcon) {
+        supportFabToggle.addEventListener("click", function () {
+            supportFab.classList.toggle("open");
+            supportFabIcon.textContent = supportFab.classList.contains("open") ? "－" : "＋";
+        });
+    }
+
+    if (!textarea || !loadStudentNamesBtn || !clearWheelInputBtn || !renderWheelBtn || !spinWheelBtn || !resultBox || !canvas) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    let wheelItems = [];
+    let currentRotation = 0;
+    let isSpinning = false;
+
+    const colors = [
+        "#4f46e5", "#3b82f6", "#0891b2", "#16a34a",
+        "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4",
+        "#22c55e", "#eab308", "#f97316", "#ec4899"
+    ];
+
+    function getItemsFromTextarea() {
+        return textarea.value
+            .split("\n")
+            .map(item => item.trim())
+            .filter(item => item.length > 0);
+    }
+
+    function drawWheel(items) {
+        const size = canvas.width;
+        const center = size / 2;
+        const radius = center - 20;
+
+        ctx.clearRect(0, 0, size, size);
+
+        if (!items.length) {
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#1e293b";
+            ctx.fill();
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 24px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("Chưa có dữ liệu", center, center);
+            return;
+        }
+
+        const arcSize = (Math.PI * 2) / items.length;
+
+        for (let i = 0; i < items.length; i++) {
+            const startAngle = i * arcSize;
+            const endAngle = startAngle + arcSize;
+
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i % colors.length];
+            ctx.fill();
+
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(startAngle + arcSize / 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 16px Arial";
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+
+            let label = items[i];
+            if (label.length > 18) {
+                label = label.slice(0, 18) + "...";
+            }
+
+            ctx.fillText(label, radius - 18, 0);
+            ctx.restore();
+        }
+
+        ctx.beginPath();
+        ctx.arc(center, center, 36, 0, Math.PI * 2);
+        ctx.fillStyle = "#0f172a";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(center, center, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+    }
+
+    function updateWheelFromTextarea() {
+        wheelItems = getItemsFromTextarea();
+        drawWheel(wheelItems);
+    }
+
+    function spinWheel() {
+        if (isSpinning) return;
+
+        wheelItems = getItemsFromTextarea();
+        if (wheelItems.length < 2) {
+            alert("Cần ít nhất 2 dòng để quay.");
+            return;
+        }
+
+        isSpinning = true;
+        resultBox.textContent = "Đang quay...";
+
+        const extraRotation = 360 * 6 + Math.floor(Math.random() * 360);
+        currentRotation += extraRotation;
+
+        canvas.style.transition = "transform 4.5s cubic-bezier(0.15, 0.85, 0.18, 1)";
+        canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+        setTimeout(() => {
+            const normalized = ((currentRotation % 360) + 360) % 360;
+            const degreesPerItem = 360 / wheelItems.length;
+            const pointerAngle = (360 - normalized + 270) % 360;
+            let selectedIndex = Math.floor(pointerAngle / degreesPerItem);
+            selectedIndex = selectedIndex % wheelItems.length;
+
+            resultBox.textContent = wheelItems[selectedIndex];
+            isSpinning = false;
+        }, 4600);
+    }
+
+    loadStudentNamesBtn.addEventListener("click", function () {
+        if (!studentNames.length) {
+            alert("Lớp hiện chưa có học sinh.");
+            return;
+        }
+        textarea.value = studentNames.join("\n");
+        updateWheelFromTextarea();
+    });
+
+    clearWheelInputBtn.addEventListener("click", function () {
+        textarea.value = "";
+        updateWheelFromTextarea();
+        resultBox.textContent = "Chưa quay";
+    });
+
+    renderWheelBtn.addEventListener("click", function () {
+        updateWheelFromTextarea();
+    });
+
+    spinWheelBtn.addEventListener("click", function () {
+        spinWheel();
+    });
+
+    if (studentNames.length) {
+        textarea.value = studentNames.join("\n");
+        updateWheelFromTextarea();
+    } else {
+        drawWheel([]);
+    }
+});
+</script>
+{% endblock %}

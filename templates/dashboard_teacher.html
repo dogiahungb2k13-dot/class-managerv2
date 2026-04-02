@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Bảng điều khiển giáo viên{% endblock %}
+{% block page_title %}Bảng điều khiển giáo viên{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+    <div>
+        <span class="pill">Teacher Panel</span>
+        <h2>Xin chào, {{ session.full_name }}</h2>
+        <p>Quản lý lớp học, học sinh và thông báo trên giao diện mạnh mẽ hơn.</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('create_class') }}">+ Tạo lớp mới</a>
+</section>
+
+<section class="stats-row">
+    <div class="stat-box">
+        <span>Tổng lớp</span>
+        <strong>{{ classes|length }}</strong>
+    </div>
+    <div class="stat-box">
+        <span>Quản lý</span>
+        <strong>Hiệu quả</strong>
+    </div>
+    <div class="stat-box">
+        <span>Excel</span>
+        <strong>Sẵn sàng</strong>
+    </div>
+</section>
+
+<section class="class-grid">
+    {% if classes %}
+        {% for c in classes %}
+            <article class="class-card-pro">
+                <div class="class-card-top">
+                    <span class="subject-chip">{{ c.subject }}</span>
+                    <span class="code-chip">{{ c.class_code }}</span>
+                </div>
+
+                <h3>{{ c.name }}</h3>
+                <p class="muted-text">Số học sinh: {{ c.total_students }}</p>
+                <p class="muted-text">Tạo lúc: {{ c.created_at|datetime_format }}</p>
+
+                <div class="class-card-actions">
+                    <a class="btn btn-primary" href="{{ url_for('class_detail', class_id=c.id) }}">Vào lớp</a>
+                    <form method="post" action="{{ url_for('delete_class', class_id=c.id) }}" onsubmit="return confirm('Bạn chắc chắn muốn xóa lớp này?');" style="display:inline;">
+                        <button class="btn btn-danger" type="submit">Xóa lớp</button>
+                    </form>
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-panel">
+            <h3>Chưa có lớp nào</h3>
+            <p>Hãy tạo lớp đầu tiên để bắt đầu quản lý.</p>
+            <a class="btn btn-primary" href="{{ url_for('create_class') }}">Tạo lớp</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

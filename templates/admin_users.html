@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Quản trị tài khoản{% endblock %}
+{% block page_title %}Quản trị tài khoản{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <div class="section-head">
+        <h3>Toàn bộ tài khoản</h3>
+        <p>Trang này dành riêng cho admin để quản lý người dùng, đổi vai trò, đặt lại mật khẩu và xóa tài khoản.</p>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Ngày tạo</th>
+                    <th>Lớp dạy</th>
+                    <th>Lớp tham gia</th>
+                    <th>Đổi vai trò</th>
+                    <th>Reset mật khẩu</th>
+                    <th>Xóa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.full_name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.role }}</td>
+                    <td>{{ u.created_at|datetime_format }}</td>
+                    <td>{{ u.total_classes }}</td>
+                    <td>{{ u.total_enrollments }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_update_user_role', user_id=u.id) }}" style="display:grid; gap:8px;">
+                            <select name="role">
+                                <option value="student" {% if u.role == 'student' %}selected{% endif %}>student</option>
+                                <option value="teacher" {% if u.role == 'teacher' %}selected{% endif %}>teacher</option>
+                            </select>
+                            <button class="btn btn-secondary" type="submit">Lưu</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_reset_password', user_id=u.id) }}" style="display:grid; gap:8px;">
+                            <input type="text" name="new_password" placeholder="Mật khẩu mới" required>
+                            <button class="btn btn-warning" type="submit">Reset</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}" onsubmit="return confirm('Bạn chắc chắn muốn xóa tài khoản này?');">
+                            <button class="btn btn-danger" type="submit">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

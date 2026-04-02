@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Bảng điều khiển học sinh{% endblock %}
+{% block page_title %}Bảng điều khiển học sinh{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+    <div>
+        <span class="pill">Student Panel</span>
+        <h2>Xin chào, {{ session.full_name }}</h2>
+        <p>Tham gia lớp học nhanh chóng bằng mã lớp hoặc chọn từ danh sách có sẵn.</p>
+    </div>
+</section>
+
+<div class="glass-panel">
+    <div class="section-head">
+        <h3>Tham gia lớp bằng mã</h3>
+        <p>Nhập mã lớp để vào lớp nhanh hơn.</p>
+    </div>
+
+    <form method="post" class="join-form">
+        <input name="class_code" placeholder="Nhập mã lớp..." required>
+        <button class="btn btn-primary" type="submit">Tham gia</button>
+    </form>
+</div>
+
+<h2 class="section-title">Lớp của tôi</h2>
+<section class="class-grid">
+    {% if classes %}
+        {% for c in classes %}
+            <article class="class-card-pro">
+                <div class="class-card-top">
+                    <span class="subject-chip">{{ c.subject }}</span>
+                    <span class="code-chip">{{ c.class_code }}</span>
+                </div>
+
+                <h3>{{ c.name }}</h3>
+                <p class="muted-text">Giáo viên: {{ c.teacher_name }}</p>
+
+                <div class="class-card-actions">
+                    <a class="btn btn-primary" href="{{ url_for('class_detail', class_id=c.id) }}">Xem lớp</a>
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-panel">
+            <h3>Chưa tham gia lớp nào</h3>
+            <p>Hãy nhập mã lớp để tham gia.</p>
+        </div>
+    {% endif %}
+</section>
+
+<div class="glass-panel">
+    <div class="section-head">
+        <h3>Khám phá lớp học</h3>
+        <p>Chọn lớp học phù hợp để tham gia.</p>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Tên lớp</th>
+                <th>Môn học</th>
+                <th>Giáo viên</th>
+                <th>Mã lớp</th>
+                <th>Thao tác</th>
+            </tr>
+            {% if available %}
+                {% for c in available %}
+                    <tr>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.subject }}</td>
+                        <td>{{ c.teacher_name }}</td>
+                        <td>{{ c.class_code }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('join_class', class_id=c.id) }}">
+                                <button class="btn btn-primary" type="submit">Tham gia</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">Hiện không có lớp nào để tham gia.</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+{% endblock %}
