@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo lớp{% endblock %}
+{% block page_title %}Tạo lớp mới{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero compact">
+    <div>
+        <span class="pill">Teacher Panel</span>
+        <h2>Tạo lớp học mới</h2>
+        <p>Bạn có thể tạo lớp và thêm học sinh từ Excel ngay khi khởi tạo lớp.</p>
+    </div>
+</div>
+
+<div class="glass-panel large-panel">
+    <div class="section-head">
+        <h3>Thông tin lớp học</h3>
+        <p>Nhập thông tin cơ bản và tải lên file Excel nếu cần.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="form-grid">
+        <div class="field full-span">
+            <label>Tên lớp</label>
+            <input name="name" placeholder="Ví dụ: 11A2 - Toán nâng cao" required>
+        </div>
+
+        <div class="field">
+            <label>Môn học</label>
+            <input name="subject" placeholder="Ví dụ: Toán" required>
+        </div>
+
+        <div class="field">
+            <label>Mô tả ngắn</label>
+            <input name="description" placeholder="Ví dụ: Lớp bồi dưỡng học kỳ 2">
+        </div>
+
+        <div class="excel-upload-box full-span">
+            <div class="excel-upload-head">
+                <div>
+                    <h3>Thêm học sinh từ Excel</h3>
+                    <p>Hỗ trợ nhiều tên cột: full_name / name / Họ và tên, email, phone_number / sdt, birth_date / ngày sinh. Chỉ bắt buộc có cột tên.</p>
+                </div>
+                <a class="btn btn-secondary" href="{{ url_for('download_student_template') }}">Tải file mẫu</a>
+            </div>
+
+            <input type="file" name="excel_file" accept=".xlsx,.xls">
+        </div>
+
+        <div class="full-span">
+            <button class="btn btn-primary" type="submit">Tạo lớp</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
